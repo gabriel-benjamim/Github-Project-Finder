@@ -1,0 +1,10 @@
+{
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
+  "devDependencies": {
+    "eslint-config-prettier": "6.11.0",
+    "eslint-config-react-app": "5.2.1"
+  }
+}

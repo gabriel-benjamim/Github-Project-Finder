@@ -1,0 +1,12 @@
+body,
+html,
+#root {
+  height: 100%;
+  margin: 0;
+}
+
+@media print {
+  body {
+    background-color: white !important;
+  }
+}

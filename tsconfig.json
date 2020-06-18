@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "jsx": "react",
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "noImplicitAny": false,
+    "resolveJsonModule": true,
+    "strict": true,
+    "suppressImplicitAnyIndexErrors": true,
+    "outDir": "build",
+    "skipLibCheck": true,
+    "downlevelIteration": true,
+    "importHelpers": true,
+    "lib": ["dom", "es5", "es2015.collection", "es2015.iterable"]
+  },
+  "exclude": ["**/node_modules/*", "**/build/*", "**/dist/*"]
+}

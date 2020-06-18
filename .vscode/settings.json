@@ -1,0 +1,19 @@
+{
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true,
+    "source.fixAll.eslint": true,
+    "eslint.autoFixOnSave": true
+  },
+  "editor.formatOnSave": true,
+  "eslint.packageManager": "yarn",
+  "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
+  "problems.decorations.enabled": true,
+  "workbench.editor.enablePreview": false,
+  "explorer.autoReveal": false,
+  "editor.tabSize": 2,
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#27d111",
+    "activityBar.inactiveForeground": "#000000",
+    "activityBar.foreground": "#fff"
+  }
+}
