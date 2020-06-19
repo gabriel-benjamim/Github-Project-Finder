@@ -5,6 +5,11 @@ html,
   margin: 0;
 }
 
+body {
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Montserrat', 'Segoe UI', Oxygen-Sans,
+    Ubuntu, 'Helvetica Neue', sans-serif;
+}
+
 @media print {
   body {
     background-color: white !important;

@@ -1,4 +1,6 @@
 {
+  "SEARCH__SUBMIT": "Search",
+  "LANGUAGE_SELECT_PLACEHOLDER": "Select a Language",
   "ERROR_BOUNDARY__TITLE": "Oh no, something went wrong!",
   "ERROR_BOUNDARY__TEXT": "We have logged the issue and have already started working on a solution! Please contact support if it persists for a long time."
 }

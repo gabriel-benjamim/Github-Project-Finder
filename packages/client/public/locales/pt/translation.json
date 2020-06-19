@@ -1,4 +1,6 @@
 {
+  "SEARCH__SUBMIT": "Buscar",
+  "LANGUAGE_SELECT_PLACEHOLDER": "Selecione uma lingua",
   "ERROR_BOUNDARY__TITLE": "Ops, algo inesperado aconteceu!",
   "ERROR_BOUNDARY__TEXT": "  O problema foi reportado e nossa equipa irá trabalhar em uma solução! Por favor entre em contato com o suporte caso o erro persista por muito tempo."
 }
