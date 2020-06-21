@@ -1,17 +1,22 @@
 import { AppBar, Toolbar } from '@material-ui/core';
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FaGithub } from 'react-icons/fa';
+import { useHistory } from 'react-router-dom';
 import styled from 'styled-components/macro';
 import LanguageSelector from '../components/LanguageSelector';
 import { PRIMARY_COLOR_PALLETE } from '../utils/constants';
 
 const Header = () => {
+  const { i18n } = useTranslation();
+  const history = useHistory();
+
   return (
     <ScAppBar position="static">
-      <Toolbar>
+      <ScToolbar onClick={() => history.push(`/${i18n.language}`)}>
         <ScGithubIcon />
         <ScTitle>Github Project Finder</ScTitle>
-      </Toolbar>
+      </ScToolbar>
       <ScLanguageSelectorWrapper>
         <ScLanguageSelector />
       </ScLanguageSelectorWrapper>
@@ -24,6 +29,10 @@ const ScAppBar = styled(AppBar)`
   grid-template-columns: 1fr auto;
   background-color: ${PRIMARY_COLOR_PALLETE[1]};
   box-shadow: none;
+`;
+
+const ScToolbar = styled(Toolbar)`
+  cursor: pointer;
 `;
 
 const ScTitle = styled.h1`

@@ -1,17 +1,15 @@
 import axios from 'axios';
-import { ROWS_PER_PAGE } from '../utils/constants';
 
-let githubApiUrl = 'https://api.github.com'; // Api base url
+const githubApiUrl = 'https://api.github.com'; // Api base url
 
 export enum QueryBy {
   name = 'name',
   description = 'description',
-  owner = 'owner',
+  user = 'user',
 }
 export enum SortBy {
   stars = 'stars',
   forks = 'forks',
-  updated = 'updated',
 }
 export enum OrderBy {
   asc = 'asc',
@@ -27,14 +25,17 @@ type GetRepositoriesProps = {
   page: number;
 };
 
-export const getRepositories = ({
-  query = '',
-  queryBy = QueryBy.name,
-  sortBy = SortBy.stars,
-  orderBy = OrderBy.desc,
-  limit = ROWS_PER_PAGE,
-  page = 0,
+export const getRepositories = async ({
+  query,
+  queryBy,
+  sortBy,
+  orderBy,
+  limit,
+  page,
 }: GetRepositoriesProps) => {
-  const repoSearchUrl = `${githubApiUrl}/search/repositories?q=${query}+in:${queryBy}&sort=${sortBy}&order=${orderBy}&per_page=${limit}&page=${page}`;
+  const queryStr =
+    queryBy === QueryBy.user ? encodeURIComponent(`user:${query}`) : `${query}+in:${queryBy}`;
+  const repoSearchUrl = `${githubApiUrl}/search/repositories?q=${queryStr}&sort=${sortBy}&order=${orderBy}&per_page=${limit}&page=${page}`;
+
   return axios.get(repoSearchUrl).then((response) => response.data);
 };

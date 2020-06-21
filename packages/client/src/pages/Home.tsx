@@ -1,249 +1,151 @@
 import {
-  Avatar,
   Button,
-  Chip,
-  IconButton,
+  CircularProgress,
   InputAdornment,
-  Link,
+  InputBase,
+  NativeSelect,
   OutlinedInput,
   Paper,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
-  useTheme,
 } from '@material-ui/core';
-import { TablePaginationActionsProps } from '@material-ui/core/TablePagination/TablePaginationActions';
-import FirstPageIcon from '@material-ui/icons/FirstPage';
-import KeyboardArrowLeft from '@material-ui/icons/KeyboardArrowLeft';
-import KeyboardArrowRight from '@material-ui/icons/KeyboardArrowRight';
-import LastPageIcon from '@material-ui/icons/LastPage';
-import { isEmpty } from 'lodash';
-import moment from 'moment';
-import React, { useMemo } from 'react';
+import { get, has, isEmpty } from 'lodash';
+import React, { useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components/macro';
-import { getRepositories } from '../api/github';
-import { useRepositories } from '../context/providers/RepositoriesProvider';
-import { PRIMARY_COLOR, PRIMARY_COLOR_PALLETE } from '../utils/constants';
+import { QueryBy } from '../api/github';
+import RepositoriesTable from '../components/repositories/RepositoriesTable';
+import {
+  defaultSearchFilter,
+  StatusType,
+  useRepositories,
+} from '../context/providers/RepositoriesProvider';
+import { BREAKPOINTS, PRIMARY_COLOR, PRIMARY_COLOR_PALLETE } from '../utils/constants';
 
 const Home = () => {
   const { t } = useTranslation();
-  const {
-    searchResult,
-    searchParams,
-    tableParams,
-    setSearchResult,
-    setSearchParams,
-  } = useRepositories();
+  const searchInputRef = useRef();
+  const { searchResult, searchFilter, status, setSearchFilter } = useRepositories();
 
-  const onSubmitSearch = () => {
-    const { query, queryBy, sortBy, orderBy } = searchParams;
-    const { page, rowsPerPage } = tableParams;
-
-    getRepositories({
-      query,
-      queryBy,
-      sortBy,
-      orderBy,
-      page,
-      limit: rowsPerPage,
-    })
-      .then((repositories) => {
-        console.log('repositories => ', repositories);
-        if (repositories && repositories.items) {
-          setSearchResult({
-            count: repositories.total_count,
-            repositories: repositories.items,
-          });
-        }
-      })
-      .catch((e) => console.log('ERRO', e));
+  const onSearchSubmit = () => {
+    const query: string = get(searchInputRef, 'current.value', '');
+    if (query) {
+      setSearchFilter({
+        ...defaultSearchFilter,
+        queryBy: searchFilter.queryBy,
+        query,
+      });
+    }
   };
 
-  const onChangeSearchInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchParams({
-      ...searchParams,
-      query: e.target.value,
+  const onChangeQueryBy = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSearchFilter({
+      ...searchFilter,
+      queryBy: e.target.value as QueryBy,
     });
+
+    if (has(searchInputRef, 'current.value')) {
+      (searchInputRef.current as any).value = '';
+    }
   };
+
+  const queryByOptions = [
+    { value: QueryBy.name, label: t('REPOSITORIES__QUERY_BY_NAME') },
+    { value: QueryBy.description, label: t('REPOSITORIES__QUERY_BY_DESCRIPTION') },
+    { value: QueryBy.user, label: t('REPOSITORIES__QUERY_BY_OWNER') },
+  ];
 
   return (
     <div>
       <Helmet>
-        <title>{t('HOME__TITLE')}</title>
+        <title>{t('PAGES_HOME__TITLE')}</title>
       </Helmet>
       <ScSearch>
+        <ScNativeSelect
+          value={searchFilter.queryBy}
+          onChange={onChangeQueryBy}
+          input={<InputBase />}
+        >
+          {queryByOptions.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </ScNativeSelect>
         <ScSearchInput
-          onChange={onChangeSearchInput}
-          placeholder={t(`Type the repository's name to search`)}
+          inputRef={searchInputRef}
+          placeholder={t('REPOSITORIES__SEARCH_INPUT_PLACEHOLDER')}
           startAdornment={
             <InputAdornment position="start" disablePointerEvents>
               <FiSearch />
             </InputAdornment>
           }
         />
-        <ScSearchBtn onClick={onSubmitSearch}>{t('SEARCH__SUBMIT')}</ScSearchBtn>
+        <ScSearchBtn onClick={onSearchSubmit}>
+          {status === StatusType.loading ? (
+            <ScCircularProgress />
+          ) : (
+            t('REPOSITORIES__BUTTON_LABEL_SUBMIT')
+          )}
+        </ScSearchBtn>
       </ScSearch>
       {!isEmpty(searchResult.repositories) && (
         <ScResults>
           <RepositoriesTable />
         </ScResults>
       )}
+
+      {status === StatusType.success && !searchResult.count && (
+        <ScNoResults>
+          <p>{t('REPOSITORIES__NO_RESULTS')}</p>
+        </ScNoResults>
+      )}
     </div>
   );
 };
 
-const RepositoriesTable = () => {
-  const { t } = useTranslation();
-  const { searchResult, tableParams, setTableParams } = useRepositories();
+const ScSearch = styled.div`
+  display: grid;
+  grid-template-rows: 1fr 1fr 1fr;
+  grid-row-gap: 5px;
+  padding: 10px 0;
+  @media screen and (min-width: ${BREAKPOINTS.md}px) {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+`;
 
-  const emptyRows: number = useMemo(() => {
-    const { page, rowsPerPage } = tableParams;
-    return rowsPerPage - Math.min(rowsPerPage, searchResult.count - page * rowsPerPage);
-  }, [searchResult.count, tableParams]);
-
-  const onChangePage = (event: any, newPage: number) => {
-    setTableParams({ ...tableParams, page: newPage });
-  };
-
-  const onChangeRowsPerPage = (event: any) => {
-    setTableParams({
-      page: 0,
-      rowsPerPage: parseInt(event.target.value, 10),
-    });
-  };
-
-  return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>{t('Repository Name')}</TableCell>
-            <TableCell>{t('Language')}</TableCell>
-            <TableCell>{t('Owner')}</TableCell>
-            <TableCell>{t('Created At')}</TableCell>
-            <TableCell align="right">{t('Stars')}</TableCell>
-            <TableCell align="right">{t('Forks')}</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {searchResult.repositories.map((repository) => {
-            return (
-              <TableRow key={repository.id}>
-                <TableCell>
-                  <Link href={repository.url} target="_blank" rel="noopener">
-                    {repository.full_name}
-                  </Link>
-                </TableCell>
-                <TableCell>
-                  {repository.language && <Chip label={repository.language} variant="outlined" />}
-                </TableCell>
-                <TableCell>
-                  <Link target="_blank" rel="noopener noreferrer" href={repository.owner.url}>
-                    <Avatar src={repository.owner.avatar_url} alt="Repository Owner Avatar" />
-                  </Link>
-                </TableCell>
-                <TableCell>{moment(repository.created_at).toDate().toLocaleString()}</TableCell>
-                <TableCell align="right">{repository.stargazers_count || 0}</TableCell>
-                <TableCell align="right">{repository.forks || 0}</TableCell>
-              </TableRow>
-            );
-          })}
-          {emptyRows > 0 && (
-            <TableRow style={{ height: 68 * emptyRows }}>
-              <TableCell colSpan={6} />
-            </TableRow>
-          )}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TablePagination
-              colSpan={6}
-              count={searchResult.count}
-              rowsPerPage={tableParams.rowsPerPage}
-              page={tableParams.page}
-              SelectProps={{
-                inputProps: { 'aria-label': 'rows per page' },
-                native: true,
-              }}
-              rowsPerPageOptions={[]}
-              onChangePage={onChangePage}
-              onChangeRowsPerPage={onChangeRowsPerPage}
-              ActionsComponent={TablePaginationActions}
-            />
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </TableContainer>
-  );
-};
-
-const TablePaginationActions = (props: TablePaginationActionsProps) => {
-  const theme = useTheme();
-  const { count, page, rowsPerPage, onChangePage } = props;
-
-  const handleFirstPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, 0);
-  };
-
-  const handleBackButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, page - 1);
-  };
-
-  const handleNextButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, page + 1);
-  };
-
-  const handleLastPageButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-    onChangePage(event, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
-  };
-
-  return (
-    <ScTablePaginationActions>
-      <IconButton onClick={handleFirstPageButtonClick} disabled={page === 0}>
-        {theme.direction === 'rtl' ? <LastPageIcon /> : <FirstPageIcon />}
-      </IconButton>
-      <IconButton onClick={handleBackButtonClick} disabled={page === 0}>
-        {theme.direction === 'rtl' ? <KeyboardArrowRight /> : <KeyboardArrowLeft />}
-      </IconButton>
-      <IconButton
-        onClick={handleNextButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-      >
-        {theme.direction === 'rtl' ? <KeyboardArrowLeft /> : <KeyboardArrowRight />}
-      </IconButton>
-      <IconButton
-        onClick={handleLastPageButtonClick}
-        disabled={page >= Math.ceil(count / rowsPerPage) - 1}
-      >
-        {theme.direction === 'rtl' ? <FirstPageIcon /> : <LastPageIcon />}
-      </IconButton>
-    </ScTablePaginationActions>
-  );
-};
-
-const ScSearch = styled(Paper)`
-  display: flex;
+const ScSearchInput = styled(OutlinedInput)`
+  width: 100%;
+  height: 44px;
   background-color: white;
-  padding: 20px;
-  vertical-align: middle;
+  @media screen and (min-width: ${BREAKPOINTS.md}px) {
+    width: 40%;
+  }
 `;
 
 const ScSearchBtn = styled(Button)`
   background-color: ${PRIMARY_COLOR_PALLETE[1]};
   color: white;
-  margin-left: 10px;
   padding: 10px;
+  height: 44px;
+  margin: 0;
   :hover {
     background-color: ${PRIMARY_COLOR};
   }
+  @media screen and (min-width: ${BREAKPOINTS.md}px) {
+    margin-left: 10px;
+  }
+`;
+
+const ScCircularProgress = styled(CircularProgress)`
+  width: auto;
+  height: 100%;
+  color: white !important;
 `;
 
 const ScResults = styled.div`
@@ -251,13 +153,27 @@ const ScResults = styled.div`
   width: 100%;
 `;
 
-const ScSearchInput = styled(OutlinedInput)`
-  width: 40%;
-  height: 44px;
+const ScNoResults = styled(Paper)`
+  margin-top: 10px;
+  padding: 30px;
+
+  p {
+    font-size: 1.5rem;
+    color: ${PRIMARY_COLOR_PALLETE[1]};
+  }
 `;
 
-const ScTablePaginationActions = styled.div`
-  flex-shrink: 0;
+const ScNativeSelect = styled(NativeSelect)`
+  height: 44px;
+  select {
+    padding: 10px;
+    color: ${PRIMARY_COLOR_PALLETE[PRIMARY_COLOR_PALLETE.length - 1]};
+  }
+  svg {
+    fill: ${PRIMARY_COLOR_PALLETE[PRIMARY_COLOR_PALLETE.length - 1]};
+    margin-right: 5px;
+  }
+  background-color: ${PRIMARY_COLOR_PALLETE[2]};
 `;
 
 export default Home;

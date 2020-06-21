@@ -1,31 +1,35 @@
-import React, { ReactNode, useContext, useState } from 'react';
-import { OrderBy, QueryBy, SortBy } from '../../api/github';
+import React, { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { getRepositories, OrderBy, QueryBy, SortBy } from '../../api/github';
 import { ROWS_PER_PAGE } from '../../utils/constants';
 
-type SearchResult = {
+export enum StatusType {
+  idle = 'idle',
+  success = 'success',
+  loading = 'loading',
+  error = 'error',
+}
+
+export type SearchResult = {
   count: number;
   repositories: any[]; //TODO: Fix types
 };
 
-type SearchParams = {
+export type SearchFilter = {
   query: string;
   queryBy: QueryBy;
   sortBy: SortBy;
   orderBy: OrderBy;
-};
-
-type TableParams = {
   page: number;
   rowsPerPage: number;
 };
 
-type ContextValue = {
-  searchResult: SearchResult;
-  searchParams: SearchParams;
-  tableParams: TableParams;
-  setSearchResult: (searchResult: SearchResult) => void;
-  setSearchParams: (searchParams: SearchParams) => void;
-  setTableParams: (tableParams: TableParams) => void;
+export const defaultSearchFilter: SearchFilter = {
+  query: '',
+  queryBy: QueryBy.name,
+  sortBy: SortBy.stars,
+  orderBy: OrderBy.desc,
+  page: 0,
+  rowsPerPage: ROWS_PER_PAGE,
 };
 
 const defaultSearchResult: SearchResult = {
@@ -33,34 +37,73 @@ const defaultSearchResult: SearchResult = {
   repositories: [],
 };
 
-const defaultSearchParams: SearchParams = {
-  query: '',
-  queryBy: QueryBy.name,
-  sortBy: SortBy.stars,
-  orderBy: OrderBy.desc,
-};
-
-const defaultTableParams: TableParams = {
-  page: 0,
-  rowsPerPage: ROWS_PER_PAGE,
+type ContextValue = {
+  searchResult: SearchResult;
+  searchFilter: SearchFilter;
+  setSearchResult: (searchResult: SearchResult) => void;
+  setSearchFilter: (searchFilter: SearchFilter) => void;
+  updateSearchResult: (newSearchFilter: SearchFilter) => void;
+  status: StatusType;
 };
 
 const RepositoriesContext = React.createContext<ContextValue | undefined>(undefined);
 
 const RepositoriesProvider = ({ children }: { children: ReactNode }) => {
   const [searchResult, setSearchResult] = useState<SearchResult>(defaultSearchResult);
-  const [searchParams, setSearchParams] = useState<SearchParams>(defaultSearchParams);
-  const [tableParams, setTableParams] = useState<TableParams>(defaultTableParams);
+  const [searchFilter, setSearchFilter] = useState<SearchFilter>(defaultSearchFilter);
+  const [status, setStatus] = useState<StatusType>(StatusType.idle);
+  const firstRun = useRef<boolean>(true);
+
+  const updateSearchResult = useCallback((newSearchFilter: SearchFilter) => {
+    const { query, queryBy, sortBy, orderBy, page, rowsPerPage } = newSearchFilter;
+
+    if (!query) return;
+
+    setStatus(StatusType.loading);
+
+    getRepositories({
+      query,
+      queryBy,
+      sortBy,
+      orderBy,
+      page: page + 1,
+      limit: rowsPerPage,
+    })
+      .then((repositories) => {
+        setStatus(StatusType.success);
+        if (repositories && repositories.items) {
+          setSearchResult({
+            count: repositories.total_count,
+            repositories: repositories.items,
+          });
+        }
+      })
+      .catch((e) => {
+        console.log(e);
+        setStatus(StatusType.error);
+        setSearchResult(defaultSearchResult);
+      });
+  }, []);
+
+  useEffect(() => {
+    if (!firstRun.current) {
+      updateSearchResult(searchFilter);
+    }
+
+    if (firstRun.current) {
+      firstRun.current = false;
+    }
+  }, [searchFilter, updateSearchResult]);
 
   return (
     <RepositoriesContext.Provider
       value={{
         searchResult,
-        searchParams,
-        tableParams,
+        searchFilter,
         setSearchResult,
-        setSearchParams,
-        setTableParams,
+        setSearchFilter,
+        updateSearchResult,
+        status,
       }}
     >
       {children}

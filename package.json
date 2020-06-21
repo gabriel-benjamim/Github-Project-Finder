@@ -3,6 +3,14 @@
   "workspaces": [
     "packages/*"
   ],
+  "scripts": {
+    "preinstall": "cd ./packages/client && npm preinstall",
+    "start": "cd ./packages/client && npm start",
+    "build": "cd ./packages/client && npm build",
+    "test": "cd ./packages/client && npm test",
+    "eject": "cd ./packages/client && npm eject",
+    "serve": "cd ./packages/client && npm serve"
+  },
   "devDependencies": {
     "eslint-config-prettier": "6.11.0",
     "eslint-config-react-app": "5.2.1"

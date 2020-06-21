@@ -6,6 +6,7 @@ html,
 }
 
 body {
+  background-color: hsl(210, 7%, 95%);
   font-family: Roboto, -apple-system, BlinkMacSystemFont, 'Montserrat', 'Segoe UI', Oxygen-Sans,
     Ubuntu, 'Helvetica Neue', sans-serif;
 }

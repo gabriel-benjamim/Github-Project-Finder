@@ -1,6 +1,21 @@
 {
-  "SEARCH__SUBMIT": "Search",
-  "LANGUAGE_SELECT_PLACEHOLDER": "Select a Language",
+  "NAVIGATION__HOME": "Home",
+  "NAVIGATION__ABOUT": "About",
+  "PAGES_HOME__TITLE": "Github Project Finder",
+  "PAGES_ABOUT__TITLE": "About Us",
+  "REPOSITORIES__BUTTON_LABEL_SUBMIT": "Search",
+  "REPOSITORIES__HEADER_NAME": "Repository Name",
+  "REPOSITORIES__HEADER_LANGUAGE": "Language",
+  "REPOSITORIES__HEADER_OWNER": "Owner",
+  "REPOSITORIES__HEADER_CREATED_AT": "Created At",
+  "REPOSITORIES__HEADER_STARS": "Stars",
+  "REPOSITORIES__HEADER_FORKS": "Forks",
+  "REPOSITORIES__QUERY_BY_NAME": "Name",
+  "REPOSITORIES__QUERY_BY_DESCRIPTION": "Description",
+  "REPOSITORIES__QUERY_BY_OWNER": "Owner",
+  "REPOSITORIES__SEARCH_INPUT_PLACEHOLDER": "Type to search",
+  "REPOSITORIES__PAGINATION_ROWS_PER_PAGE": "Rows per page",
+  "REPOSITORIES__NO_RESULTS": "No Results Found",
   "ERROR_BOUNDARY__TITLE": "Oh no, something went wrong!",
   "ERROR_BOUNDARY__TEXT": "We have logged the issue and have already started working on a solution! Please contact support if it persists for a long time."
 }

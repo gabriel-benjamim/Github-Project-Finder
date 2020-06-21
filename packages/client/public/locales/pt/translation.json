@@ -1,6 +1,21 @@
 {
-  "SEARCH__SUBMIT": "Buscar",
-  "LANGUAGE_SELECT_PLACEHOLDER": "Selecione uma lingua",
+  "NAVIGATION__HOME": "Página Inicial",
+  "NAVIGATION__ABOUT": "Sobre",
+  "PAGES_HOME__TITLE": "Github Project Finder",
+  "PAGES_ABOUT__TITLE": "Sobre",
+  "REPOSITORIES__BUTTON_LABEL_SUBMIT": "Buscar",
+  "REPOSITORIES__HEADER_NAME": "Nome do Repositório",
+  "REPOSITORIES__HEADER_LANGUAGE": "Linguagem",
+  "REPOSITORIES__HEADER_OWNER": "Criador",
+  "REPOSITORIES__HEADER_CREATED_AT": "Criado em",
+  "REPOSITORIES__HEADER_STARS": "Stars",
+  "REPOSITORIES__HEADER_FORKS": "Forks",
+  "REPOSITORIES__QUERY_BY_NAME": "Nome",
+  "REPOSITORIES__QUERY_BY_DESCRIPTION": "Descrição",
+  "REPOSITORIES__QUERY_BY_OWNER": "Criador",
+  "REPOSITORIES__SEARCH_INPUT_PLACEHOLDER": "Digite para buscar",
+  "REPOSITORIES__PAGINATION_ROWS_PER_PAGE": "Resultados por página",
+  "REPOSITORIES__NO_RESULTS": "Nenhum resultado encontrado",
   "ERROR_BOUNDARY__TITLE": "Ops, algo inesperado aconteceu!",
-  "ERROR_BOUNDARY__TEXT": "  O problema foi reportado e nossa equipa irá trabalhar em uma solução! Por favor entre em contato com o suporte caso o erro persista por muito tempo."
+  "ERROR_BOUNDARY__TEXT": "O problema foi reportado e nossa equipa irá trabalhar em uma solução! Por favor entre em contato com o suporte caso o erro persista por muito tempo."
 }

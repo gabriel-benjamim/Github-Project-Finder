@@ -6,6 +6,7 @@ type Props = {
 };
 
 const ErrorPage = ({ title = '', children }: Props) => {
+  //TODO:
   return (
     <div>
       {title}

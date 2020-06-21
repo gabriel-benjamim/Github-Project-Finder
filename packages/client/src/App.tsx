@@ -1,25 +1,27 @@
 import React from 'react';
-import { Route, Switch } from 'react-router';
+import { useTranslation } from 'react-i18next';
+import { Redirect, Route, Switch } from 'react-router';
 import styled from 'styled-components/macro';
-import { AppProviders } from './context';
 import Footer from './layouts/Footer';
 import Header from './layouts/Header';
+import About from './pages/About';
 import Home from './pages/Home';
-import { SECONDARY_COLOR_PALLETE } from './utils/constants';
 
 const App = () => {
+  const { i18n } = useTranslation();
+
   return (
-    <AppProviders>
-      <ScLayout>
-        <Header />
-        <ScContent>
-          <Switch>
-            <Route path="/" component={Home} />
-          </Switch>
-        </ScContent>
-        <Footer />
-      </ScLayout>
-    </AppProviders>
+    <ScLayout>
+      <Header />
+      <ScContent>
+        <Switch>
+          <Route exact path="/:lng" component={Home} />
+          <Route exact path="/:lng/about" component={About} />
+          <Redirect from="*" to={`/${i18n.language}`} />
+        </Switch>
+      </ScContent>
+      <Footer />
+    </ScLayout>
   );
 };
 
@@ -27,13 +29,13 @@ const ScLayout = styled.div`
   display: grid;
   height: 100%;
   grid-template-rows: auto 1fr auto;
-  background-color: ${SECONDARY_COLOR_PALLETE[SECONDARY_COLOR_PALLETE.length - 1]};
 `;
 
 const ScContent = styled.div`
   padding: 10px;
   box-sizing: border-box;
-  width: 1200px;
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto;
 `;
 
