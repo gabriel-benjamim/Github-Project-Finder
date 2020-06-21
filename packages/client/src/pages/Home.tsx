@@ -14,14 +14,13 @@ import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components/macro';
-import { QueryBy } from '../api/github';
 import RepositoriesTable from '../components/repositories/RepositoriesTable';
 import {
   defaultSearchFilter,
   StatusType,
   useRepositories,
 } from '../context/providers/RepositoriesProvider';
-import { BREAKPOINTS, PRIMARY_COLOR, PRIMARY_COLOR_PALLETE } from '../utils/constants';
+import { BREAKPOINTS, PRIMARY_COLOR, PRIMARY_COLOR_PALLETE, QueryBy } from '../utils/constants';
 
 const Home = () => {
   const { t } = useTranslation();
@@ -87,6 +86,12 @@ const Home = () => {
         <ScSearchInput
           inputRef={searchInputRef}
           placeholder={t('REPOSITORIES__SEARCH_INPUT_PLACEHOLDER')}
+          onKeyPress={(event) => {
+            if (event.charCode === 13 && status !== StatusType.loading) {
+              event.preventDefault();
+              onSearchSubmit();
+            }
+          }}
           startAdornment={
             <InputAdornment position="start" disablePointerEvents>
               <FiSearch />

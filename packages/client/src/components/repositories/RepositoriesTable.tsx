@@ -16,10 +16,10 @@ import {
 import moment from 'moment';
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { OrderBy, SortBy } from '../../api/github';
 import TablePaginationActions from '../../components/repositories/TablePaginationActions';
 import { useRepositories } from '../../context/providers/RepositoriesProvider';
-import { ROWS_PER_PAGE } from '../../utils/constants';
+import { OrderBy, ROWS_PER_PAGE, SortBy } from '../../utils/constants';
+import { Repository } from '../../utils/types';
 
 const RepositoriesTable = ({ className }: { className?: string }) => {
   const { t } = useTranslation();
@@ -78,24 +78,24 @@ const RepositoriesTable = ({ className }: { className?: string }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          {searchResult.repositories.map((repository) => {
+          {searchResult.repositories.map((repository: Repository) => {
             return (
               <TableRow key={repository.id}>
                 <TableCell>
-                  <Link href={repository.html_url} target="_blank" rel="noopener">
-                    {repository.full_name}
+                  <Link href={repository.url} target="_blank" rel="noopener">
+                    {repository.name}
                   </Link>
                 </TableCell>
                 <TableCell>
                   {repository.language && <Chip label={repository.language} variant="outlined" />}
                 </TableCell>
                 <TableCell>
-                  <Link target="_blank" rel="noopener noreferrer" href={repository.owner.html_url}>
-                    <Avatar src={repository.owner.avatar_url} alt="Repository Owner Avatar" />
+                  <Link target="_blank" rel="noopener noreferrer" href={repository.ownerUrl}>
+                    <Avatar src={repository.ownerAvatarUrl} alt="Owner's Avatar" />
                   </Link>
                 </TableCell>
-                <TableCell>{moment(repository.created_at).toDate().toLocaleString()}</TableCell>
-                <TableCell align="right">{repository.stargazers_count || 0}</TableCell>
+                <TableCell>{moment(repository.createdAt).toDate().toLocaleString()}</TableCell>
+                <TableCell align="right">{repository.stars || 0}</TableCell>
                 <TableCell align="right">{repository.forks || 0}</TableCell>
               </TableRow>
             );

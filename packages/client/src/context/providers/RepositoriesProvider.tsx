@@ -1,6 +1,8 @@
 import React, { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
-import { getRepositories, OrderBy, QueryBy, SortBy } from '../../api/github';
-import { ROWS_PER_PAGE } from '../../utils/constants';
+import { getRepositories } from '../../api/github';
+import { OrderBy, QueryBy, ROWS_PER_PAGE, SortBy } from '../../utils/constants';
+import { mapSearchResult } from '../../utils/helper';
+import { SearchFilter, SearchResult } from '../../utils/types';
 
 export enum StatusType {
   idle = 'idle',
@@ -8,20 +10,6 @@ export enum StatusType {
   loading = 'loading',
   error = 'error',
 }
-
-export type SearchResult = {
-  count: number;
-  repositories: any[]; //TODO: Fix types
-};
-
-export type SearchFilter = {
-  query: string;
-  queryBy: QueryBy;
-  sortBy: SortBy;
-  orderBy: OrderBy;
-  page: number;
-  rowsPerPage: number;
-};
 
 export const defaultSearchFilter: SearchFilter = {
   query: '',
@@ -32,7 +20,7 @@ export const defaultSearchFilter: SearchFilter = {
   rowsPerPage: ROWS_PER_PAGE,
 };
 
-const defaultSearchResult: SearchResult = {
+export const defaultSearchResult: SearchResult = {
   count: 0,
   repositories: [],
 };
@@ -66,16 +54,14 @@ const RepositoriesProvider = ({ children }: { children: ReactNode }) => {
       queryBy,
       sortBy,
       orderBy,
+      rowsPerPage,
       page: page + 1,
-      limit: rowsPerPage,
     })
-      .then((repositories) => {
+      .then((result) => {
         setStatus(StatusType.success);
-        if (repositories && repositories.items) {
-          setSearchResult({
-            count: repositories.total_count,
-            repositories: repositories.items,
-          });
+        if (result && result.items) {
+          const mappedResult: SearchResult = mapSearchResult(result);
+          setSearchResult(mappedResult);
         }
       })
       .catch((e) => {

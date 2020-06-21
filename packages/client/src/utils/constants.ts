@@ -23,3 +23,17 @@ export const BREAKPOINTS = {
   md: 768,
   lg: 1024,
 };
+
+export enum QueryBy {
+  name = 'name',
+  description = 'description',
+  user = 'user',
+}
+export enum SortBy {
+  stars = 'stars',
+  forks = 'forks',
+}
+export enum OrderBy {
+  asc = 'asc',
+  desc = 'desc',
+}
