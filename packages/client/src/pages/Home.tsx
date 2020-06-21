@@ -7,8 +7,9 @@ import {
   OutlinedInput,
   Paper,
 } from '@material-ui/core';
+import toast from 'cogo-toast';
 import { get, has, isEmpty } from 'lodash';
-import React, { useRef } from 'react';
+import React, { useLayoutEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { useTranslation } from 'react-i18next';
 import { FiSearch } from 'react-icons/fi';
@@ -49,6 +50,17 @@ const Home = () => {
     }
   };
 
+  useLayoutEffect(() => {
+    if (status === StatusType.error) {
+      toast.error(
+        <div>
+          <strong>{t('ERROR_BOUNDARY__TITLE')}</strong>
+          <p>{t('ERROR_BOUNDARY__TEXT')}</p>
+        </div>
+      );
+    }
+  }, [status, t]);
+
   const queryByOptions = [
     { value: QueryBy.name, label: t('REPOSITORIES__QUERY_BY_NAME') },
     { value: QueryBy.description, label: t('REPOSITORIES__QUERY_BY_DESCRIPTION') },
@@ -81,7 +93,7 @@ const Home = () => {
             </InputAdornment>
           }
         />
-        <ScSearchBtn onClick={onSearchSubmit}>
+        <ScSearchBtn disabled={status === StatusType.loading} onClick={onSearchSubmit}>
           {status === StatusType.loading ? (
             <ScCircularProgress />
           ) : (
@@ -128,8 +140,9 @@ const ScSearchInput = styled(OutlinedInput)`
   }
 `;
 
-const ScSearchBtn = styled(Button)`
-  background-color: ${PRIMARY_COLOR_PALLETE[1]};
+const ScSearchBtn = styled(Button)<{ disabled: boolean }>`
+  background-color: ${(props) =>
+    props.disabled ? PRIMARY_COLOR_PALLETE[2] : PRIMARY_COLOR_PALLETE[1]};
   color: white;
   padding: 10px;
   height: 44px;
