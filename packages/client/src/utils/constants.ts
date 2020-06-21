@@ -24,6 +24,13 @@ export const BREAKPOINTS = {
   lg: 1024,
 };
 
+export enum StatusType {
+  idle = 'idle',
+  success = 'success',
+  loading = 'loading',
+  error = 'error',
+}
+
 export enum QueryBy {
   name = 'name',
   description = 'description',

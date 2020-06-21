@@ -1,15 +1,9 @@
+import { get } from 'lodash';
 import React, { ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { getRepositories } from '../../api/github';
-import { OrderBy, QueryBy, ROWS_PER_PAGE, SortBy } from '../../utils/constants';
+import { OrderBy, QueryBy, ROWS_PER_PAGE, SortBy, StatusType } from '../../utils/constants';
 import { mapSearchResult } from '../../utils/helper';
 import { SearchFilter, SearchResult } from '../../utils/types';
-
-export enum StatusType {
-  idle = 'idle',
-  success = 'success',
-  loading = 'loading',
-  error = 'error',
-}
 
 export const defaultSearchFilter: SearchFilter = {
   query: '',
@@ -25,7 +19,7 @@ export const defaultSearchResult: SearchResult = {
   repositories: [],
 };
 
-type ContextValue = {
+export type ContextValue = {
   searchResult: SearchResult;
   searchFilter: SearchFilter;
   setSearchResult: (searchResult: SearchResult) => void;
@@ -65,8 +59,13 @@ const RepositoriesProvider = ({ children }: { children: ReactNode }) => {
         }
       })
       .catch((e) => {
-        console.log(e);
-        setStatus(StatusType.error);
+        //When searching by Owner and there's no results it returns 422 but we want to consider it as an empty result
+        if (get(e, 'response.status') === 422) {
+          setStatus(StatusType.success);
+        } else {
+          setStatus(StatusType.error);
+        }
+
         setSearchResult(defaultSearchResult);
       });
   }, []);
@@ -105,4 +104,4 @@ const useRepositories = (): ContextValue => {
   return context;
 };
 
-export { useRepositories, RepositoriesProvider };
+export { useRepositories, RepositoriesProvider, RepositoriesContext };

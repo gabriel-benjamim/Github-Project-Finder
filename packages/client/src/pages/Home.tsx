@@ -15,12 +15,14 @@ import { useTranslation } from 'react-i18next';
 import { FiSearch } from 'react-icons/fi';
 import styled from 'styled-components/macro';
 import RepositoriesTable from '../components/repositories/RepositoriesTable';
+import { defaultSearchFilter, useRepositories } from '../context/providers/RepositoriesProvider';
 import {
-  defaultSearchFilter,
+  BREAKPOINTS,
+  PRIMARY_COLOR,
+  PRIMARY_COLOR_PALLETE,
+  QueryBy,
   StatusType,
-  useRepositories,
-} from '../context/providers/RepositoriesProvider';
-import { BREAKPOINTS, PRIMARY_COLOR, PRIMARY_COLOR_PALLETE, QueryBy } from '../utils/constants';
+} from '../utils/constants';
 
 const Home = () => {
   const { t } = useTranslation();
