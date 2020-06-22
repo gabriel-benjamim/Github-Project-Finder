@@ -4,7 +4,7 @@
     "packages/*"
   ],
   "scripts": {
-    "preinstall": "cd ./packages/client && npm preinstall",
+    "preinstall": "node -e 'if(!/yarn\\.js$/.test(process.env.npm_execpath))throw new Error(\"Use yarn\")'",
     "start": "cd ./packages/client && npm start",
     "build": "cd ./packages/client && npm build",
     "test": "cd ./packages/client && npm test",
