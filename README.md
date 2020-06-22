@@ -7,7 +7,7 @@ Results can be filtered by Name, Description, or the repository's Owner and sort
 
 ## Installation
 
-This project uses yarn workspaces, so the use of [Yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) is required to install the dependencies.
+This project uses yarn workspaces, so the use of [Yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable) is required to install its dependencies.
 
 ```bash
 yarn install
