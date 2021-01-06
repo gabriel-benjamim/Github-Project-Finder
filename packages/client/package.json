@@ -5,7 +5,7 @@
   "dependencies": {
     "@material-ui/core": "4.10.2",
     "@material-ui/icons": "4.9.1",
-    "axios": "0.19.2",
+    "axios": "0.21.1",
     "cogo-toast": "4.2.3",
     "i18next": "19.4.5",
     "i18next-browser-languagedetector": "4.3.1",
